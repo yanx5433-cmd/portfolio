@@ -1,0 +1,346 @@
+% !TeX program = xelatex
+% 作品集 PDF — 编译：xelatex portfolio.tex && xelatex portfolio.tex
+\documentclass[10.5pt,a4paper]{article}
+\usepackage[UTF8,scheme=plain]{ctex}
+\usepackage{fontspec}
+\setCJKmainfont{SimSun}[BoldFont=SimHei, ItalicFont=SimSun]
+\setCJKsansfont{SimHei}
+\setCJKfamilyfont{hei}{SimHei}
+\setCJKfamilyfont{yahei}{Microsoft YaHei}[BoldFont=Microsoft YaHei Bold]
+\setmonofont{Consolas}[Scale=0.92]
+\newcommand{\yadi}{\CJKfamily{yahei}}
+
+\usepackage[a4paper,top=2.0cm,bottom=1.9cm,left=2.0cm,right=2.0cm,headheight=14pt]{geometry}
+\usepackage[dvipsnames]{xcolor}   % 不带 table 选项：colortbl 与本机 MiKTeX 的 array/tabularx 冲突
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{parskip}
+\usepackage{needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=accent,urlcolor=accent,citecolor=accent,
+  pdftitle={薛彦欣 · AI 应用 / 大模型应用工程师 · 作品集},pdfauthor={薛彦欣}}
+
+% ---------------------------------------------------------------- 主题色
+\definecolor{accent}{HTML}{1C6B45}
+\definecolor{accentlt}{HTML}{E8F3EC}
+\definecolor{ink}{HTML}{14201B}
+\definecolor{dim}{HTML}{5D6B64}
+\definecolor{rule}{HTML}{C9D6CE}
+\definecolor{warn}{HTML}{8A5A12}
+\definecolor{warnlt}{HTML}{FBF2DF}
+\definecolor{codebg}{HTML}{F4F7F5}
+
+% ---------------------------------------------------------------- 待填实测数字
+\newcommand{\Ntools}{14}
+\newcommand{\Nread}{11}
+\newcommand{\Nwrite}{3}
+% \Ntests 只指 OpsPilot 的测试数（ContentOps 是 72，勿复用此宏）
+\newcommand{\Ntests}{536}
+\newcommand{\Neval}{100\%}
+\newcommand{\Ncases}{15}
+\newcommand{\Nloc}{7{,}457}
+\newcommand{\Nadr}{6}
+\newcommand{\Ngate}{5}
+
+% ---------------------------------------------------------------- 版式
+\titleformat{\section}{\normalfont\yadi\bfseries\large\color{accent}}
+  {\thesection\hspace{0.7em}}{0pt}{}
+  [{\vspace{-1.35em}\color{rule}\titlerule[0.9pt]\vspace{0.9em}}]
+\titlespacing*{\section}{0pt}{1.75em}{1.05em}
+\titleformat{\subsection}{\normalfont\yadi\bfseries\normalsize\color{ink}}
+  {\thesubsection\hspace{0.55em}}{0pt}{}
+\titlespacing*{\subsection}{0pt}{1.25em}{0.45em}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+
+\pagestyle{fancy}\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}\renewcommand{\headrule}{\hbox to\headwidth{\color{rule}\leaders\hrule height \headrulewidth\hfill}}
+\fancyhead[L]{\footnotesize\color{dim}薛彦欣 · 求职作品集 · AI 应用 / 大模型应用工程师}
+\fancyhead[R]{\footnotesize\color{dim}\thepage}
+\fancypagestyle{plain}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}}
+
+\setlist[itemize]{leftmargin=1.25em,itemsep=2.5pt,topsep=4pt,label=\textcolor{accent}{\rule[0.45ex]{2.4ex}{0.55ex}}}
+\setlist[enumerate]{leftmargin=1.5em,itemsep=2.5pt,topsep=4pt}
+
+\newcommand{\met}[2]{\begin{tabular}[t]{@{}l@{}}{\color{accent}\yadi\bfseries\large #1}\\[1pt]{\footnotesize\color{dim}#2}\end{tabular}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\lstdefinestyle{sh}{basicstyle=\ttfamily\scriptsize,backgroundcolor=\color{codebg},
+  frame=single,rulecolor=\color{rule},framesep=7pt,
+  breaklines=true,columns=fullflexible,keepspaces,aboveskip=8pt,belowskip=4pt,
+  commentstyle=\color{dim},keywordstyle=\color{accent}\bfseries,showstringspaces=false}
+
+\newtcolorbox{keybox}[1]{enhanced,breakable,colback=accentlt,colframe=accent,boxrule=0.8pt,
+  arc=1pt,left=10pt,right=10pt,top=7pt,bottom=7pt,fonttitle=\yadi\bfseries\small,
+  coltitle=white,colbacktitle=accent,title={#1}}
+\newtcolorbox{warnbox}[1]{enhanced,breakable,colback=warnlt,colframe=warn,boxrule=0.8pt,
+  arc=1pt,left=10pt,right=10pt,top=7pt,bottom=7pt,fonttitle=\yadi\bfseries\small,
+  coltitle=white,colbacktitle=warn,title={#1}}
+
+% ================================================================ 封面
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{tikzpicture}[remember picture,overlay]
+  \fill[accent] (current page.north west) rectangle ([yshift=-5.2mm]current page.north east);
+  \node[anchor=north east,text=white,font=\ttfamily\scriptsize,xshift=-2cm,yshift=-7.6mm]
+    {opspilot.trace.v1};
+\end{tikzpicture}
+
+\vspace*{1.1cm}
+{\fontsize{13}{16}\selectfont\color{dim}\ttfamily PORTFOLIO / 2026 / CLASS OF 2027\par}
+\vspace{0.9cm}
+
+{\fontsize{46}{54}\selectfont\yadi\bfseries 薛彦欣\par}
+\vspace{0.25cm}
+{\fontsize{17}{24}\selectfont\color{ink}让 Agent 说的每一句话，都能追到证据。\par}
+\vspace{0.75cm}
+
+{\color{rule}\rule{\textwidth}{0.9pt}}
+\vspace{0.55cm}
+
+\begin{tabularx}{\textwidth}{@{}L{3.1cm}X@{}}
+\textcolor{dim}{\yadi 求职意向} & AI 应用工程师 · 大模型应用工程师（亦可匹配 信息化 / 运维技术支持 方向）\\[4pt]
+\textcolor{dim}{\yadi 代码仓库} & \url{https://github.com/yanx5433-cmd} \\[4pt]
+\textcolor{dim}{\yadi 主打作品} & OpsPilot —— 巡检与故障诊断智能体（开源，MIT）\\[4pt]
+\textcolor{dim}{\yadi 联系方式} & 为保护个人信息，本册不含手机号与邮箱；随投递材料单独提供 \\
+\end{tabularx}
+
+\vspace{0.75cm}
+\begin{keybox}{本册要说明的一件事}
+我没有把「接上了大模型」当成作品。这份作品集里唯一的主张是：\textbf{一个 Agent 能不能进生产，
+取决于它失控时你能不能拦住它、它说错时你能不能查出来}。
+所以 OpsPilot 把工程重心放在工具授权、预算熔断、可回放轨迹与离线评测上，
+而不是放在提示词措辞上。
+\end{keybox}
+
+\vfill
+\begin{tabularx}{\textwidth}{@{}XXXX@{}}
+\met{14 个}{声明式工具} & \met{5 道}{护栏闸门，均可独立单测}
+  & \met{6 篇}{架构决策记录} & \met{\textbf{0} 个}{运行时第三方依赖}\\[18pt]
+\met{可回放}{JSONL 轨迹} & \met{含阴性对照}{离线评测集}
+  & \met{\textbf{\Ntests}}{离线单元测试} & \met{无 API Key}{全功能可运行}\\
+\end{tabularx}
+\vspace{0.4cm}
+\begin{center}{\footnotesize\color{dim}本册所有数字均来自仓库实测（pytest 收集数、路由装饰器计数、LOC 统计），未沿用简历概数。\par}\end{center}
+\end{titlepage}
+
+% ================================================================ 1
+\setcounter{page}{1}
+\section{主打作品 · OpsPilot 巡检与故障诊断智能体}
+
+\subsection{它解决的具体问题}
+
+值班时收到一条告警，人要在指标、日志、运维手册、历史故障之间来回跳转二十分钟，
+最后还要写一份能交出去的记录。OpsPilot 把这二十分钟压成一次运行：
+给出根因排序、对应手册步骤、配置整改项与容量外推，
+并把\textbf{每一步为什么这么做}逐条写进可回放的 JSONL 轨迹。
+
+场景选运维巡检，是因为我自己写过第一版：一个 Python 脚本流水线，定时探活、抓指标、发报表。
+它能跑，但\textbf{没有规划、没有护栏、没有评测}——这三样正是 OpsPilot 的靶心。
+
+\begin{lstlisting}[style=sh]
+$ python -m app.cli run "db-01 为什么一直在重启，帮我排查根因" -v
+  状态：done｜引擎：rule｜预算：{'steps': '6/10', 'tool_calls': '6/14', 'llm_calls': '0/6'}
+  * metrics_query     db-01 mem：当前 93.2% 已超阈值 85%、EWMA 越限 1 点
+  * log_search        命中 71 条（FATAL 71）「Out of memory: Killed process <N> (mysqld)」
+  * root_cause_rank   根因排序：最可能「进程被 OOM Killer 终止」（P0），共 5 个候选
+  * runbook_get       《进程被 OOM Killer 终止处置手册》处置步骤 6 条
+  * incident_history  平均修复 41.0 分钟；1 类属反复发生（需根治）
+  * reflect           证据覆盖达标 ['doc','log','metric'] → 无需重规划
+  * citation          保留 16 句 · 裁掉 0 句 · 数字溯源异常 0 处
+\end{lstlisting}
+{\footnotesize\color{dim}上为本地真实运行输出（轨迹 \texttt{task\_6cb5a3f50c}），未做修饰。演示数据为固定种子合成，非生产数据。\par}
+
+\subsection{一次请求的链路}
+
+\begin{center}
+\begin{tikzpicture}[
+  font=\scriptsize, node distance=3mm,
+  st/.style={draw=rule,fill=white,rounded corners=1pt,minimum width=25mm,minimum height=13mm,align=center},
+  gt/.style={draw=accent,fill=accentlt,rounded corners=1pt,minimum width=25mm,minimum height=9mm,align=center},
+  ar/.style={-{Latex[length=2mm]},draw=accent,thick}]
+\node[gt] (g1) {\textbf{闸门 1}\\ 输入拦截};
+\node[st,right=of g1] (p) {\yadi 双引擎规划\\\textcolor{dim}{规则默认 · LLM 增强}};
+\node[gt,right=of p] (g2) {\textbf{闸门 2·3}\\ 授权 · 参数消毒};
+\node[st,right=of g2] (e) {\yadi 拓扑执行\\\textcolor{dim}{超时 · 重试 · 熔断}};
+\node[gt,right=of e] (g4) {\textbf{闸门 4·5}\\ 引用校验 · 脱敏};
+\draw[ar] (g1) -- (p); \draw[ar] (p) -- (g2); \draw[ar] (g2) -- (e); \draw[ar] (e) -- (g4);
+\node[below=1.5mm of e,font=\scriptsize\color{warn}] (rf) {\rotatebox{90}{\ttfamily reflect}};
+\draw[-{Latex[length=1.6mm]},draw=warn,dashed] (rf) to[bend left=22] node[above,font=\tiny,sloped]{补只读步骤 $\le$2 轮} (g2);
+\end{tikzpicture}
+\end{center}
+{\footnotesize\color{dim}绿底为拦截站，白底为推进站。反思站只会补\textbf{只读}步骤，永不自动引入写操作。\par}
+
+\subsection{关键取舍（完整推导见仓库 \texttt{docs/ADR.md}）}
+
+\begin{itemize}
+\item[\textcolor{accent}{\yadi ADR-001}] \textbf{规则优先，LLM 是增强项而非依赖项。}
+  规划与综合各有两条实现；模型超时、返回非法 JSON、给出未知工具，一律回落规则并记
+  \texttt{fallback\_reason}。无人值守不该因为上游一次 503 就断整晚巡检。
+\item[\textcolor{accent}{\yadi ADR-002}] \textbf{幻觉要能被数出来。}
+  引用闸门逐句检查 \texttt{[ev:id]}：无证据的事实句\textbf{删除}而不是标黄；
+  句中出现证据里没有的数字则标记并把任务降级为 \texttt{partial}。
+  规则模式天生逐句引用，因此它是「引用率 100\%」的基线，LLM 模式同闸门、无豁免。
+\item[\textcolor{accent}{\yadi ADR-003}] \textbf{不给 Agent shell。}
+  运行时零 \texttt{subprocess}；\Nread{} 只读 + \Nwrite{} 写操作，写操作默认挂起等待逐名授权；
+  \texttt{http\_probe} 带目标白名单以堵 SSRF。
+\item[\textcolor{accent}{\yadi ADR-004}] \textbf{轨迹用流式 JSONL。}
+  事件产生即 flush，进程崩了也留有部分轨迹；\texttt{read\_trace()} 校验序号连续，
+  审计日志有洞必须当场发现。
+\item[\textcolor{accent}{\yadi ADR-005}] \textbf{合成数据 + 阴性对照。}
+  固定种子生成 8 台主机 × 72 小时指标与 893 行日志，显式注入 5 类故障，
+  并保留一台全程健康的 \texttt{cache-01}：Agent 不许在它身上无中生有。
+\item[\textcolor{accent}{\yadi ADR-006}] \textbf{反思按「工具+参数签名」去重。}
+  第一版按工具名去重，导致「关键词太窄查不到日志」时拒绝用更宽正则再查一次——
+  而自我纠正恰是我要演示的能力。
+\end{itemize}
+
+\subsection{判断力来自可复算的算法，不是模型}
+
+\begin{tabularx}{\textwidth}{@{}L{3.0cm}X@{}}
+\textbf{BM25 检索} & 中英混排，中文按 bigram 切分。零依赖、可预测；不选向量检索是有意的——演示项目里引入 embedding 只增加「看起来复杂」，不增加可解释性。\\
+\textbf{EWMA 异常检测} & 指数加权控制限。不用全局 z-score，因为磁盘水位是单调慢变趋势，全局均值会把「缓慢变坏」稀释掉。\\
+\textbf{最小二乘容量外推} & 外推「几天写满」并输出 $R^2$；$R^2<0.6$ 时\textbf{工具主动拒答}，不给一个看起来很确定的天数。斜率按 \texttt{points\_per\_day} 换算，避免把小时级斜率当日均值低估 24 倍。\\
+\textbf{日志签名聚合} & 掩码时间戳/IP/UUID/路径/数字后按模板计数，才能识别「同一条错误刷了 71 次」。\\
+\textbf{根因假设评分} & 证据可靠度（实时指标 $>$ 日志 $>$ 配置 $>$ 文档）× 规则强度归一化排序。LLM 若参与，只允许把排序翻译成中文，\textbf{不允许改动排序}。\\
+\end{tabularx}
+
+\subsection{工程指标}
+
+\begin{center}\begin{tabular}{cccc}
+\met{\textbf{\Ntools} 个}{声明式工具（\Nread{} 读 /\ \Nwrite{} 写）}
+&\met{\textbf{\Ntests}}{离线单元测试（无 Key · 无网络）}
+&\met{\textbf{\Neval}}{评测集通过率}
+&\met{\textbf{\Ncases} 例}{金标用例}\\[10pt]
+\met{\textbf{\Ngate} 道}{护栏闸门，均可独立单测}
+&\met{\textbf{\Nadr} 篇}{架构决策记录}
+&\met{\textbf{\Nloc} 行}{Python 代码}
+&\met{\textbf{0}}{运行时第三方依赖}\\
+\end{tabular}\end{center}
+
+\begin{warnbox}{已知局限（完整清单见 docs/LIMITATIONS.md）}
+\begin{itemize}[label=--]
+\item 数据是\textbf{合成演示数据}，指标分布为人工设定，阈值接真实环境必须重标；阴性对照只有一台，
+  因此「误报率」只能给方向性结论，给不出置信区间。
+\item \texttt{root\_cause\_rank} 输出的 \texttt{probability} 是\textbf{相对占比，不是校准概率}，
+  可用于排序，不能理解成「有 26\% 的实际可能性」。
+\item 无 API Key 的 CI 里，LLM 分支\textbf{只被单测以 mock 覆盖}，没有被真实模型跑通；
+  本册不声称「LLM 规划提升了 X\%」。
+\item 单步超时用线程池实现，Python 线程无法真正杀死跑飞的计算，真实做法应是子进程硬超时。
+\item 观测面板\textbf{没有鉴权}，\texttt{/api/run} 会真的执行任务，不可暴露公网。
+\end{itemize}
+\end{warnbox}
+
+% ================================================================ 2
+\section{其他作品}
+
+\subsection{ContentOps Agent · 带货内容运营智能体（已开源）}
+FastAPI + SQLite。与 OpsPilot 同源但不同域：解决「内容能不能发、发完卖得怎样」。
+\begin{itemize}
+\item \textbf{26 个接口、72 项离线测试}（pytest 实际收集条目数，非概数），2{,}401 行 Python。
+\item \textbf{双引擎选题评分}：内容质量引擎 ×0.6 + 商品转化引擎 ×0.4 × 加购系数。
+\item \textbf{P0/P1/P2 三级合规过滤}：P0 命中直接驳回并留审计；审批状态机
+  \texttt{draft→scored→reviewed→approved→published}，非法跃迁返回 409。
+\item \textbf{人工审批与审计}：所有写动作落 \texttt{AuditLog}，可回溯谁在何时改了什么。
+\item \textbf{销售回流复盘}：上架后回收 GMV/退货率，与选题预估做偏差校准。
+\item 同样\textbf{无 API Key 全功能可用}：规则模板兜底，模型不可用时降级为素材摘录。
+\end{itemize}
+
+\subsection{制造业 SOP 智能问答助手 · 轻量 RAG}
+Streamlit + LangChain + Chroma：本地知识库上传、检索增强问答、聊天式交互。
+它是我理解「embedding 检索与 BM25 各自适用边界」的起点——
+OpsPilot 的手册检索最终选了可解释的 BM25，这个反向取舍写在 ADR 里。
+
+\subsection{数据可视化实验 · Three.js 与自定义 GLSL}
+\texttt{rain-as-data} 把 26 个真实降雨数据点渲染成实时粒子雨；
+\texttt{atlas-cellularis} 做体积细胞：GPGPU 流场、薄膜干涉虹彩、SDF 有丝分裂、电影级后期。
+两者均零构建、零运行时依赖、纯离线。这块回答的是我自己一个问题：
+\textbf{数据到底该由后端出图还是前端出图}。
+
+\subsection{墨香书城 · 在线书店（毕业设计）}
+Spring Boot（\texttt{:18080}）+ Vue 3 / TypeScript / Element Plus / Pinia（Vite \texttt{:5173}）前后端分离。
+按高校毕设评审标准交付联调报告、演示账号与数据库脚本。
+因含课程评审材料，未单独开源。
+
+% ================================================================ 3
+\section{方法与能力}
+
+\subsection{我按什么标准做作品集}
+\begin{tabularx}{\textwidth}{@{}L{3.3cm}X@{}}
+\textbf{\yadi 可复现优先} & 演示数据固定种子、异常显式注入。面试官在自己机器上跑，结果与我逐行一致，不存在「我这儿是绿的」。\\
+\textbf{\yadi 能力可断言} & 「防幻觉」不是形容词，而是引用裁撤条数、无证据句比例、数字溯源失败数三个可测指标，并有一例专门检查阴性对照主机不被误报。\\
+\textbf{\yadi 决策与代价同写} & \Nadr{} 篇 ADR 每篇都带「付出了什么代价」与「什么时候该推翻它」。只写正确决定的文档等于没写。\\
+\textbf{\yadi 局限单独成页} & 合成数据、未校准概率、mock 覆盖的 LLM 分支、无鉴权面板——写在 README 第一屏能看见的地方。\\
+\end{tabularx}
+
+\subsection{过程中的两次真实返工}
+我认为这两条比「功能做完了」更能说明问题：
+\begin{enumerate}
+\item \textbf{参数消毒毙掉了自己的诊断场景。} 元字符检查按字符集一刀切，把 \texttt{restart|OOM}
+  这个合法日志正则当成 shell 注入拦下，导致「db-01 重启」这条主用例查不到任何日志。
+  修法不是加白名单，而是把检查改成按\textbf{串联模式}匹配（\texttt{\&\&}、\texttt{||}、\texttt{;}、反引号、\texttt{\$()}），放过单个 \texttt{|}。
+\item \textbf{引用闸门制造了一个空标题。} 闸门把「阻塞与未覆盖」小节下的条目当无证据句删了，
+  于是输出里留下一个没有内容的标题——\textbf{掩盖失败比丢失措辞严重}。
+  现在按小节粒度豁免，两处都补了回归测试。
+\end{enumerate}
+另外还有一次自我打脸：我在建议句里写了「由以上 6 条观察可派生交付物」，
+被自己的数字溯源闸门判为无源数字——那个「6」活在证据账本里，不在任何一条被引证据里。
+闸门是对的，句子是我写错了。
+
+\subsection{技术栈自评}
+{\footnotesize\color{dim}横条按「我能独立交付到什么程度」自评，不是学时。\par}
+\vspace{2pt}
+\begin{tabularx}{\textwidth}{@{}L{2.7cm}Xr@{}}
+\textbf{Python} & Agent 运行时 · FastAPI · 算法实现 · 标准库优先 & 86\%\\
+\textbf{LLM 应用} & 工具调用 · 结构化输出校验 · 降级路径 · 引用约束 & 80\%\\
+\textbf{评测/可观测} & 离线评测集 · JSONL 轨迹回放 · CI 门禁 & 74\%\\
+\textbf{前端} & Vue 3 / TypeScript · 原生 HTML/CSS/JS（本作品集网站即手写） & 68\%\\
+\textbf{图形/着色器} & Three.js · 自定义 GLSL · GPGPU 粒子 & 64\%\\
+\textbf{运维/后端} & Linux 巡检 · Nginx/MySQL/Redis 排障 · Spring Boot · SQL & 62\%\\
+\end{tabularx}
+
+\subsection{教育背景}
+计算机科学与技术，2027 届本科。当前主线为毕业设计收尾与求职项目工程化。
+自学路径：从写脚本做自动化巡检，到发现自己写的东西「不可测、不可审计、不可交接」，
+于是回头补测试、评测与文档——这份作品集本身就是这条路径的产物。
+
+% ================================================================ 4
+\section{复现与材料清单}
+
+\begin{lstlisting}[style=sh]
+# 三条命令跑通 OpsPilot（不需要任何 API Key）
+$ git clone https://github.com/yanx5433-cmd/opspilot-agent.git && cd opspilot-agent
+$ python scripts/seed_demo.py                # 确定性演示数据，种子 20261017
+$ python -m app.cli run "db-01 为什么一直在重启，帮我排查根因" -v
+
+$ python -m app.cli run "巡检 web-01 生成巡检报告"                 # 写操作未授权 -> blocked
+$ python -m app.cli run "巡检 web-01 生成巡检报告" --approve report_render
+$ python -m app.cli eval --fail-under 0.9                          # 离线评测（CI 门禁）
+$ python -m uvicorn app.server:app --port 18090                    # 观测面板
+\end{lstlisting}
+
+\begin{tabularx}{\textwidth}{@{}L{4.3cm}X@{}}
+\url{https://github.com/yanx5433-cmd/opspilot-agent} & 主打作品：Agent 运行时 + \Ntools{} 工具 + \Ngate{} 闸门 + 轨迹 + 评测 + CI + 面板 \\
+\url{https://github.com/yanx5433-cmd/contentops-agent} & 内容运营智能体：26 接口 / 72 项测试 / 三级合规 / 审批审计 \\
+\url{https://github.com/yanx5433-cmd/manufacturing-sop-qa-assistant} & 轻量 RAG 问答 \\
+\url{https://github.com/yanx5433-cmd/rain-as-data} & WebGL 数据可视化实验 \\
+\url{https://github.com/yanx5433-cmd/atlas-cellularis} & GLSL 体积细胞实验 \\
+\end{tabularx}
+
+\vspace{4pt}
+\begin{keybox}{关于本册数字的口径}
+测试数取 \texttt{pytest} 实际收集条目数，接口数取路由装饰器计数，代码行取 \texttt{wc -l}，
+评测通过率取 \texttt{app.cli eval} 报告；全部可在仓库根目录用文档里的命令复算。
+演示数据为合成数据，与任何真实生产环境无关；本册不含手机号与邮箱等可定位个人信息。
+\end{keybox}
+
+\end{document}

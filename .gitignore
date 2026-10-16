@@ -1,0 +1,13 @@
+# LaTeX 编译产物
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 本地草稿
+*.bak

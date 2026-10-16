@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>薛彦欣 · AI 应用 / 大模型应用工程师 · 作品集</title>
+<meta name="description" content="OpsPilot：可评测、可审计、零依赖可运行的工具调用型巡检智能体。求职作品集，含架构决策与已知局限。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230b0f14'/><text y='23' x='5' font-family='monospace' font-size='18' fill='%235ef08a'>▚</text></svg>">
+<style>
+/* ==========================================================================
+   控制室 / 遥测质感。无 web 字体：HR 与国内网络环境下必须秒开，
+   字体性格靠“宋体标题 + 黑体正文 + 等宽数字”的对比与字号阶梯做，不靠外发请求。
+   ========================================================================== */
+:root{
+  --ink:#080c11; --panel:#0e141c; --panel2:#131c26; --line:#1e2a37; --line2:#2a3a4a;
+  --text:#dfe8f1; --dim:#8496a8; --dimmer:#5c6c7d;
+  --phos:#5ef08a; --phos-dim:#2f7a4a; --amber:#ffb43a; --red:#ff6b6b; --cite:#6cb6ff;
+  --mono:"Cascadia Mono",Consolas,"Sarasa Mono SC","JetBrains Mono","DejaVu Sans Mono",monospace;
+  --serif:"Noto Serif SC","Source Han Serif SC","STZhongsong","SimSun","Songti SC",serif;
+  --sans:"Noto Sans SC","Source Han Sans SC","Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
+  --max:1220px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--ink);color:var(--text);font-family:var(--sans);
+  font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+/* 网格底纹 + 极淡噪点，做出仪表盘屏感而非纯黑块 */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    linear-gradient(transparent 0 96%,rgba(94,240,138,.035) 96% 100%) 0 0/100% 34px,
+    linear-gradient(90deg,transparent 0 96%,rgba(94,240,138,.028) 96% 100%) 0 0/34px 100%;
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.025) 1px,transparent 1px);background-size:3px 3px;
+}
+main,header,footer{position:relative;z-index:2}
+a{color:var(--phos);text-decoration:none;border-bottom:1px solid rgba(94,240,138,.28);transition:.2s}
+a:hover{border-bottom-color:var(--phos);background:rgba(94,240,138,.08)}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 30px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--dimmer)}
+
+/* ---------- 顶栏 ---------- */
+.topbar{position:sticky;top:0;z-index:40;backdrop-filter:blur(10px);
+  background:rgba(8,12,17,.82);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;gap:22px;height:56px}
+.brand{font-family:var(--serif);font-weight:700;font-size:17px;letter-spacing:.04em;white-space:nowrap}
+.brand b{color:var(--phos)}
+.navlinks{display:flex;gap:20px;margin-left:auto;font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.navlinks a{color:var(--dim);border:0}
+.navlinks a:hover{color:var(--phos);background:none}
+.live{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;color:var(--dimmer)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--phos);box-shadow:0 0 8px var(--phos);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ---------- HERO：非对称双栏，右栏是真实轨迹流 ---------- */
+.hero{padding:74px 0 58px;position:relative}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+h1{font-family:var(--serif);font-size:clamp(38px,5.1vw,66px);line-height:1.14;margin:14px 0 0;
+   font-weight:800;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--phos);position:relative}
+h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.06em;height:.1em;background:rgba(94,240,138,.22)}
+.sub{color:var(--dim);font-size:16.5px;margin:20px 0 0;max-width:46ch}
+.rolebar{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{font-family:var(--mono);font-size:12px;padding:5px 11px;border:1px solid var(--line2);
+  border-radius:999px;color:var(--dim);background:rgba(19,28,38,.7)}
+.chip.on{border-color:var(--phos-dim);color:var(--phos)}
+.cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+.btn{font-family:var(--mono);font-size:13.5px;padding:12px 22px;border-radius:2px;border:1px solid var(--phos);
+  background:var(--phos);color:#04140a;font-weight:700;cursor:pointer;transition:.18s;letter-spacing:.02em}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px -12px rgba(94,240,138,.7);background:#78f79e;border-color:#78f79e}
+.btn.ghost{background:transparent;color:var(--phos)}
+.btn.ghost:hover{background:rgba(94,240,138,.1);box-shadow:none}
+
+/* 轨迹面板 */
+.trace{border:1px solid var(--line2);background:linear-gradient(180deg,var(--panel2),#0b1119);
+  border-radius:3px;box-shadow:0 30px 70px -40px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,255,255,.04)}
+.trace-hd{display:flex;align-items:center;gap:9px;padding:10px 14px;border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:11.5px;color:var(--dimmer)}
+.trace-hd .bar{width:9px;height:9px;border-radius:50%;background:var(--line2)}
+.trace-hd .bar.g{background:var(--phos-dim)}
+.trace-body{padding:12px 14px 14px;font-family:var(--mono);font-size:12.2px;line-height:1.85;
+  height:352px;overflow:hidden;position:relative}
+.trace-body::after{content:"";position:absolute;inset:auto 0 0 0;height:52px;
+  background:linear-gradient(transparent,#0b1119)}
+.tl{display:grid;grid-template-columns:28px 100px minmax(0,1fr);gap:8px;opacity:0;transform:translateY(4px);
+  animation:tin .4s forwards}
+.tl .tx{min-width:0}
+@keyframes tin{to{opacity:1;transform:none}}
+.tl .seq{color:var(--dimmer)}
+.tl .ty{color:var(--cite)}
+.tl .ty.guard{color:var(--amber)}
+.tl .ty.reflect{color:var(--cite)}
+.tl .ty.citation{color:var(--red)}
+.tl .ty.answer{color:var(--phos)}
+.tl .tx{color:#b9c9d8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl .tx strong{color:var(--phos);font-weight:600}
+.trace-ft{border-top:1px solid var(--line);padding:9px 14px;font-family:var(--mono);font-size:11px;color:var(--dimmer)}
+
+/* ---------- 统计条 ---------- */
+.stats{border-block:1px solid var(--line);background:rgba(14,20,28,.55)}
+.stats .wrap{display:grid;grid-template-columns:repeat(5,1fr);gap:0}
+.stat{padding:26px 20px 24px;border-left:1px solid var(--line)}
+.stat:first-child{border-left:0}
+.stat .n{font-family:var(--mono);font-size:33px;font-weight:700;color:var(--phos);line-height:1;letter-spacing:-.02em}
+.stat .n small{font-size:14px;color:var(--dim);font-weight:400;margin-left:3px}
+.stat .l{font-size:13px;color:var(--dim);margin-top:9px}
+
+/* ---------- 通用区块 ---------- */
+section{padding:86px 0}
+.sec-hd{display:flex;align-items:baseline;gap:18px;margin-bottom:12px}
+h2{font-family:var(--serif);font-size:clamp(27px,3.3vw,40px);margin:0;font-weight:800;letter-spacing:-.01em}
+h2 .idx{font-family:var(--mono);font-size:15px;color:var(--phos-dim);margin-right:14px;font-weight:400}
+.lede{color:var(--dim);max-width:74ch;font-size:16px;margin:0 0 40px}
+
+/* 管线图 */
+.pipe{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid var(--line);
+  background:var(--panel);position:relative;overflow:hidden}
+.stage{padding:24px 20px 26px;border-left:1px solid var(--line);position:relative}
+.stage:first-child{border-left:0}
+.stage .k{font-family:var(--mono);font-size:11px;color:var(--phos-dim);letter-spacing:.14em}
+.stage .t{font-family:var(--serif);font-weight:700;font-size:19px;margin:9px 0 7px}
+.stage .d{font-size:13.5px;color:var(--dim);line-height:1.7}
+.stage::after{content:"";position:absolute;top:0;left:0;height:2px;width:0;background:var(--phos);opacity:.65}
+.stage.in::after{animation:sweep 1.1s ease forwards}
+@keyframes sweep{to{width:100%}}
+
+/* 项目卡 */
+.feature{border:1px solid var(--line2);background:linear-gradient(180deg,var(--panel),#0a1016);border-radius:3px;
+  padding:40px;position:relative;overflow:hidden}
+.feature::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(600px 200px at 12% 0%,rgba(94,240,138,.07),transparent 70%);pointer-events:none}
+.f-gh{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:6px}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{font-family:var(--mono);font-size:11px;padding:4px 9px;border:1px solid var(--line2);color:var(--dim);border-radius:2px}
+.badge.hot{border-color:var(--phos-dim);color:var(--phos);background:rgba(94,240,138,.06)}
+h3{font-family:var(--serif);font-size:26px;margin:10px 0 6px;font-weight:800}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:34px}
+.mini{border:1px solid var(--line);background:rgba(19,28,38,.5);padding:20px 18px 22px;border-radius:2px;
+  transition:.22s;position:relative}
+.mini:hover{border-color:var(--phos-dim);transform:translateY(-3px)}
+.mini .mh{font-family:var(--mono);font-size:11px;color:var(--phos);letter-spacing:.12em;margin-bottom:9px}
+.mini .mt{font-family:var(--serif);font-weight:700;font-size:17.5px;margin-bottom:8px}
+.mini .mb{font-size:13.8px;color:var(--dim);line-height:1.72}
+.mini .ml{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dimmer)}
+blockquote{margin:0;padding:16px 20px;border-left:2px solid var(--phos);background:rgba(94,240,138,.05);
+  font-family:var(--serif);font-size:16.5px;color:#cfe6d6}
+pre{margin:0;background:#060a0e;border:1px solid var(--line);border-radius:2px;padding:18px 20px;overflow-x:auto;
+  font-family:var(--mono);font-size:12.8px;line-height:1.95;color:#c3d4c9}
+pre .c{color:var(--dimmer)} pre .p{color:var(--phos)} pre .o{color:var(--amber)}
+.codebox{position:relative;margin-top:22px}
+.copy{position:absolute;top:9px;right:9px;font-family:var(--mono);font-size:11px;padding:4px 9px;
+  background:var(--panel2);border:1px solid var(--line2);color:var(--dim);cursor:pointer;border-radius:2px}
+.copy:hover{color:var(--phos);border-color:var(--phos-dim)}
+
+/* 编辑式项目清单 */
+.list{border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:78px 1.15fr 1.9fr auto;gap:24px;align-items:start;
+  padding:26px 0;border-bottom:1px solid var(--line);transition:.2s;cursor:pointer}
+.row:hover{background:rgba(94,240,138,.03);padding-left:10px}
+.row .yr{font-family:var(--mono);font-size:12.5px;color:var(--dimmer);padding-top:4px}
+.row .nm{font-family:var(--serif);font-size:20px;font-weight:700}
+.row .nm span{display:block;font-family:var(--mono);font-size:11.5px;color:var(--phos);font-weight:400;margin-top:5px;letter-spacing:.06em}
+.row .ds{font-size:14.2px;color:var(--dim);line-height:1.8}
+.row .ds b{color:#c8d7e6;font-weight:500}
+.row .go{font-family:var(--mono);font-size:12px;color:var(--dimmer);white-space:nowrap;padding-top:4px}
+.row:hover .go{color:var(--phos)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.tag{font-family:var(--mono);font-size:10.5px;color:var(--dimmer);border:1px solid var(--line);padding:2px 7px;border-radius:2px}
+
+/* 能力矩阵 */
+.matrix{display:grid;grid-template-columns:repeat(2,1fr);gap:0 40px;border-top:1px solid var(--line)}
+.mrow{display:grid;grid-template-columns:132px 1fr;gap:18px;padding:15px 0;border-bottom:1px solid var(--line);align-items:center}
+.mrow .mk{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.mrow .mv{font-size:14px;color:#c4d2df}
+.meter{height:3px;background:var(--line);margin-top:7px;position:relative;overflow:hidden}
+.meter i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--phos-dim),var(--phos));width:0;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.in .meter i{width:var(--w)}
+
+/* 工程习惯 */
+.habits{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.habit{background:var(--panel);padding:26px 24px}
+.habit .hk{font-family:var(--mono);font-size:12px;color:var(--phos);margin-bottom:10px;letter-spacing:.1em}
+.habit .hv{font-family:var(--serif);font-size:17.5px;font-weight:700;margin-bottom:8px}
+.habit .hd{font-size:13.8px;color:var(--dim);line-height:1.78}
+.note{border:1px dashed var(--line2);padding:20px 22px;background:rgba(255,180,58,.04);font-size:14px;color:#d8c9a8}
+.note b{color:var(--amber)}
+
+footer{border-top:1px solid var(--line);padding:46px 0 60px;background:rgba(10,15,21,.7)}
+footer .wrap{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:flex-start}
+footer .fc{max-width:52ch;font-size:13.5px;color:var(--dimmer);line-height:1.85}
+footer .fl{text-align:right;font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+footer .fl a{display:block;margin-bottom:7px}
+
+html.js .rv{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+html.js .rv.in{opacity:1;transform:none}
+
+@media(max-width:960px){
+  .navlinks{display:none}
+  .topbar .wrap{gap:12px}
+  .hero .wrap{grid-template-columns:1fr;gap:34px}
+  .stats .wrap{grid-template-columns:repeat(2,1fr)}
+  .stat{border-left:0;border-top:1px solid var(--line)}
+  .pipe{grid-template-columns:1fr}
+  .stage{border-left:0;border-top:1px solid var(--line)}
+  .grid3,.matrix,.habits{grid-template-columns:1fr}
+  .row{grid-template-columns:1fr;gap:8px}
+  .row .go{display:none}
+  .feature{padding:24px}
+  section{padding:60px 0}
+  .trace-body{height:262px}
+}
+@media(max-width:520px){
+  h1{font-size:31px;line-height:1.2}
+  .sub{font-size:15px}
+  .stat .n{font-size:27px}
+  .trace-body{height:230px;font-size:11px}
+  .tl{grid-template-columns:22px 78px minmax(0,1fr)}
+  .wrap{padding:0 18px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+  html.js .rv{opacity:1;transform:none}
+}
+@media print{
+  body{background:#fff;color:#111}
+  body::before,body::after,.topbar,.cta,.copy{display:none!important}
+  .feature,.mini,.row,.trace{border-color:#ccc;background:#fff}
+  h1,h2,h3,.stat .n{color:#0b3a1e}
+  .trace-body{height:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <div class="brand">薛彦欣 <b>·</b> Yanxin Xue</div>
+  <nav class="navlinks">
+    <a href="#work">作品</a><a href="#opspilot">OpsPilot</a><a href="#method">方法</a>
+    <a href="#stack">技能</a><a href="#repo">仓库</a>
+  </nav>
+  <div class="live"><span class="dot"></span>AGENT&nbsp;RUNTIME</div>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <div>
+    <div class="eyebrow">Portfolio · 2026 · Class of 2027</div>
+    <h1>让 Agent 说的<br>每一句话，<em>都能追到证据</em></h1>
+    <p class="sub">我是薛彦欣，2027 届计算机专业，求职方向是 <b>AI 应用 / 大模型应用工程师</b>。
+      下面这个开源项目不是「接了个 API 的聊天机器人」——它把工具调用、预算熔断、
+      写操作授权、可回放轨迹和离线评测做成了一个能无人值守跑的巡检智能体。</p>
+    <div class="rolebar">
+      <span class="chip on">Python · 零运行时依赖</span>
+      <span class="chip">Agent Runtime</span>
+      <span class="chip">Tool Calling</span>
+      <span class="chip">Eval / Observability</span>
+      <span class="chip">FastAPI</span>
+    </div>
+    <div class="cta">
+      <a class="btn" href="https://github.com/yanx5433-cmd/opspilot-agent" target="_blank" rel="noopener">GitHub 仓库 →</a>
+      <a class="btn ghost" href="#opspilot">看架构决策</a>
+    </div>
+  </div>
+
+  <aside class="trace" aria-label="真实运行轨迹">
+    <div class="trace-hd">
+      <span class="bar"></span><span class="bar g"></span><span class="bar"></span>
+      <span style="margin-left:8px">run/traces/task_6cb5a3f50c.jsonl</span>
+      <span style="margin-left:auto">opspilot.trace.v1</span>
+    </div>
+    <div class="trace-body" id="stream"></div>
+    <div class="trace-ft">↑ 本机真实运行输出，未做修饰 · 目标：「db-01 为什么一直在重启，帮我排查根因」</div>
+  </aside>
+</div></header>
+
+<div class="stats"><div class="wrap">
+  <div class="stat"><div class="n" id="m-tools">14</div><div class="l">声明式工具<br>11 只读 / 3 需授权</div></div>
+  <div class="stat"><div class="n" id="m-tests">536<small>项</small></div><div class="l">离线单元测试<br>无 Key · 无网络</div></div>
+  <div class="stat"><div class="n" id="m-eval">100<small>%</small></div><div class="l">评测集通过率<br>含阴性对照用例</div></div>
+  <div class="stat"><div class="n" id="m-loc">7.5k</div><div class="l">Python 代码行<br>含测试与评测</div></div>
+  <div class="stat"><div class="n">0<small>个</small></div><div class="l">运行时第三方依赖<br>shell 权限同样是 0</div></div>
+</div></div>
+
+<main>
+
+<!-- ================= 管线 ================= -->
+<section id="work"><div class="wrap">
+  <div class="sec-hd"><h2><span class="idx">01</span>一条目标进来，会发生什么</h2></div>
+  <p class="lede">Agent 的难点不在“能调工具”，而在<b>它决定调什么的时候，你还能不能拦住它</b>。
+    这条链路里每一站都可能把任务停下，而且停下必须留下痕迹。</p>
+  <div class="pipe rv">
+    <div class="stage"><div class="k">GATE 1</div><div class="t">输入拦截</div>
+      <div class="d">「删库」「rm -rf」这类高危目标<b>不进规划器</b>，直接 blocked 并落轨迹。</div></div>
+    <div class="stage"><div class="k">PLAN</div><div class="t">双引擎规划</div>
+      <div class="d">规则模板默认在线；有 Key 时让模型出 JSON 计划，再逐条校验，不过就回落。</div></div>
+    <div class="stage"><div class="k">GATE 2·3</div><div class="t">授权与消毒</div>
+      <div class="d">写操作逐名授权；参数按声明校验类型与取值域，未知参数剔除。</div></div>
+    <div class="stage"><div class="k">EXECUTE</div><div class="t">拓扑执行</div>
+      <div class="d">依赖排序、单步超时、只读失败重试一次；<b>单步失败不炸全局</b>。</div></div>
+    <div class="stage"><div class="k">GATE 4</div><div class="t">引用闸门</div>
+      <div class="d">结论逐句查 <span class="mono" style="color:var(--cite)">[ev:id]</span>，查不到证据的句子<b>删掉</b>而不是标黄。</div></div>
+  </div>
+  <div style="margin-top:22px;display:flex;gap:26px;flex-wrap:wrap;font-family:var(--mono);font-size:12.5px;color:var(--dimmer)">
+    <span>↻ 反思站：证据不足时自动补<b style="color:var(--cite)">只读</b>步骤，最多 2 轮，且永不自动引入写操作</span>
+    <span>⏱ 预算站：步骤 10 / 工具 14 / LLM 6 / 单步 10s，超即熔断</span>
+  </div>
+</div></section>
+
+<!-- ================= OpsPilot ================= -->
+<section id="opspilot" style="padding-top:20px"><div class="wrap">
+  <div class="sec-hd"><h2><span class="idx">02</span>主打作品 · OpsPilot 巡检与故障诊断智能体</h2></div>
+  <p class="lede">运维/技术支持场景里，“AI 帮我看看服务器怎么了”通常有两种结局：要么只能聊天给建议，
+    要么真给了 shell 权限。我选择第三条：<b>能力全部声明为受审工具，判断过程全部落成可回放轨迹</b>。</p>
+
+  <article class="feature rv">
+    <div class="f-gh">
+      <div class="badges">
+        <span class="badge hot">开源 · MIT</span><span class="badge">Python 3.11+</span>
+        <span class="badge">FastAPI 面板</span><span class="badge">GitHub Actions</span>
+        <span class="badge">无 Key 全功能</span>
+      </div>
+      <a href="https://github.com/yanx5433-cmd/opspilot-agent" target="_blank" rel="noopener"
+         class="mono" style="font-size:13px">yanx5433-cmd/opspilot-agent ↗</a>
+    </div>
+    <h3>它解决的具体问题</h3>
+    <p style="color:var(--dim);max-width:70ch;margin-top:0">值班时收到一条告警，人要花二十分钟在指标、日志、手册、历史故障之间来回跳，
+      还得写一份能交出去的记录。OpsPilot 把这二十分钟压成一次运行：给出根因排序、对应手册步骤、
+      配置整改项、容量外推，并把每一步为什么这么做写进 JSONL 轨迹。</p>
+    <blockquote>关键取舍：结论里出现一个证据里没有的数字，宁可把这句话删掉、
+      把任务降级成 <span class="mono">partial</span>，也不让它留在答复里显得完整。</blockquote>
+
+    <div class="grid3">
+      <div class="mini"><div class="mh">ADR-001</div><div class="mt">规则优先，LLM 是增强</div>
+        <div class="mb">规划与综合各两条实现。模型超时、返非法 JSON、给出未知工具，都回落规则模板并记 <span class="mono">fallback_reason</span>。无人值守不该因为一个 503 就断巡检。</div>
+        <div class="ml">docs/ADR.md</div></div>
+      <div class="mini"><div class="mh">ADR-002</div><div class="mt">裁句子，不标黄</div>
+        <div class="mb">引用闸门按句检查证据 id 与数字溯源。误伤也真实发生过：序号「步骤 3」被判成无源数字、阻塞清单被删成空标题——<b>掩盖失败比丢失措辞严重</b>，两处都留了测试。</div>
+        <div class="ml">app/agent/synthesizer.py</div></div>
+      <div class="mini"><div class="mh">ADR-003</div><div class="mt">不给 Agent shell</div>
+        <div class="mb">运行时零 subprocess。14 个工具都是显式函数，写操作默认挂起等人工授权；<span class="mono">http_probe</span> 带目标白名单堵 SSRF。元字符检查刻意放过单个 <span class="mono">|</span>——日志 pattern 是正则。</div>
+        <div class="ml">app/agent/guardrails.py</div></div>
+      <div class="mini"><div class="mh">算法</div><div class="mt">判断力可复算</div>
+        <div class="mb">BM25（中文 bigram，零依赖）检索手册；EWMA 控制限检异常（不用全局 z-score，磁盘是慢变趋势）；最小二乘外推“几天写满”，<b>R²&lt;0.6 直接拒答</b>。</div>
+        <div class="ml">app/algos.py</div></div>
+      <div class="mini"><div class="mh">评测</div><div class="mt">含阴性对照</div>
+        <div class="mb">金标用例断言工具序列、证据覆盖、护栏命中、引用完整性。数据里放了一台全程健康的 <span class="mono">cache-01</span>：Agent 不许在它身上无中生有。</div>
+        <div class="ml">evals/cases/</div></div>
+      <div class="mini"><div class="mh">诚实边界</div><div class="mt">写了局限清单</div>
+        <div class="mb">合成数据、阈值未标定、“概率”实为相对占比未校准、LLM 分支在 CI 里只被 mock 覆盖、面板无鉴权不可公网。见 <span class="mono">docs/LIMITATIONS.md</span>。</div>
+        <div class="ml">docs/LIMITATIONS.md</div></div>
+    </div>
+
+    <div class="codebox">
+      <button class="copy" data-copy="clone">复制</button>
+      <pre id="clone"><span class="c"># 三条命令跑通（不需要任何 API Key）</span>
+<span class="p">$</span> git clone https://github.com/yanx5433-cmd/opspilot-agent.git &amp;&amp; cd opspilot-agent
+<span class="p">$</span> python scripts/seed_demo.py                     <span class="c"># 生成确定性演示数据（种子 20261017）</span>
+<span class="o">$</span> python -m app.cli run “db-01 为什么一直在重启，帮我排查根因” -v
+<span class="c">  状态：done｜预算：{'steps': '6/10', 'tool_calls': '6/14', 'llm_calls': '0/6'}
+  ✓ 根因排序：最可能「进程被 OOM Killer 终止」（P0）→ 对应手册 rb-oom-kill</span>
+
+<span class="p">$</span> python -m app.cli run “巡检 web-01 生成巡检报告”        <span class="c"># 写操作未授权 → blocked 挂起</span>
+<span class="p">$</span> python -m app.cli run “巡检 web-01 生成巡检报告” --approve report_render
+<span class="p">$</span> python -m app.cli eval --fail-under 0.9              <span class="c"># 离线评测，CI 门禁</span></pre>
+    </div>
+    <p style="font-family:var(--mono);font-size:12px;color:var(--dimmer);margin-top:14px">
+      面板：<span style="color:var(--phos)">python -m uvicorn app.server:app --port 18090</span> → 左侧输入目标，右侧看事件时间线、证据表与被拦截的写操作</p>
+  </article>
+</div></section>
+
+<!-- ================= 其他项目 ================= -->
+<section id="method" style="padding-top:30px"><div class="wrap">
+  <div class="sec-hd"><h2><span class="idx">03</span>其他作品</h2></div>
+  <p class="lede">下面每一项都能点开看到代码，数字均为仓库实测，不来自简历概数。</p>
+  <div class="list">
+    <div class="row rv" onclick="location.href='https://github.com/yanx5433-cmd/contentops-agent'">
+      <div class="yr mono">2026</div>
+      <div class="nm">ContentOps Agent<span>带货内容运营智能体 · 已开源</span></div>
+      <div class="ds"><b>26 个接口、72 项离线测试</b>（pytest 收集数实测），双引擎选题评分、
+        P0/P1/P2 三级合规过滤、人工审批状态机与销售回流复盘。FastAPI + SQLite，同样无 Key 全功能可用。
+        <div class="tags"><span class="tag">FastAPI</span><span class="tag">SQLite</span><span class="tag">合规规则</span><span class="tag">审批与审计</span></div></div>
+      <div class="go">2.4k LOC ↗</div>
+    </div>
+    <div class="row rv" onclick="location.href='https://github.com/yanx5433-cmd/manufacturing-sop-qa-assistant'">
+      <div class="yr mono">2026</div>
+      <div class="nm">制造业 SOP 智能问答<span>轻量 RAG · Streamlit</span></div>
+      <div class="ds">本地知识库上传、检索增强问答与聊天式交互。是我理解 <b>embedding 检索与 BM25 的差异</b>
+        的起点——OpsPilot 的手册检索反而选了可解释的 BM25，这个取舍写在 ADR 里。</div>
+      <div class="go">↗</div>
+    </div>
+    <div class="row rv" onclick="location.href='https://github.com/yanx5433-cmd/rain-as-data'">
+      <div class="yr mono">2026</div>
+      <div class="nm">如果降雨数据变成雨<span>Three.js + 自定义 GLSL</span></div>
+      <div class="ds">把 26 个真实降雨数据点渲染成实时粒子雨，另有一版体积细胞的着色器实验
+        （<b>GPGPU 流场、薄膜干涉虹彩</b>）。零构建、零运行时依赖，纯离线。<br>
+        这块是我对“数据可视化到底该由后端出图还是前端出图”的实操答案。</div>
+      <div class="go">↗</div>
+    </div>
+    <div class="row rv">
+      <div class="yr mono">2026</div>
+      <div class="nm">墨香书城 · 在线书店<span>毕业设计 · Spring Boot + Vue 3</span></div>
+      <div class="ds">前后端分离：Spring Boot（<span class="mono">:18080</span>）+ Vue 3 / TypeScript / Element Plus / Pinia，
+        按高校毕设评审标准交付联调报告、演示账号与数据库脚本。<b>未单独开源</b>（含课程评审材料）。
+        <div class="tags"><span class="tag">Spring Boot</span><span class="tag">Vue 3</span><span class="tag">Pinia</span><span class="tag">H2/MySQL</span></div></div>
+      <div class="go">答辩版</div>
+    </div>
+    <div class="row rv">
+      <div class="yr mono">2026</div>
+      <div class="nm">网站与系统自动巡检工具<span>Python · 简历项目原型</span></div>
+      <div class="ds">我真正的第一版“巡检”：定时探活、抓取指标、生成报表邮件。它只是脚本流水线，
+        <b>没有规划、没有护栏、没有评测</b>——OpsPilot 就是照着这三样缺口重写的。</div>
+      <div class="go">→ 演化</div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ================= 工程习惯 ================= -->
+<section style="padding-top:20px"><div class="wrap">
+  <div class="sec-hd"><h2><span class="idx">04</span>我按什么标准做作品集</h2></div>
+  <p class="lede">参考了大厂开源项目与几份内部技术评审的写法之后，我给自己定了四条硬要求——它们比代码量更能说明问题。</p>
+  <div class="habits rv">
+    <div class="habit"><div class="hk">01 / REPRODUCIBLE</div><div class="hv">可复现优先于好看</div>
+      <div class="hd">演示数据由固定种子生成，异常是显式注入的。面试官在自己机器上跑，结果和我这儿逐行一致，不存在“我这儿是绿的”。</div></div>
+    <div class="habit"><div class="hk">02 / MEASURABLE</div><div class="hv">能力要能被断言</div>
+      <div class="hd">“防幻觉”不是形容词：它等于引用裁撤条数、无证据句比例、数字溯源失败数三个可测指标，并且有一条用例专门检查阴性对照主机不被误报。</div></div>
+    <div class="habit"><div class="hk">03 / DOCUMENTED</div><div class="hv">决策与代价一起写</div>
+      <div class="hd">六篇 ADR 都带“付出了什么代价”和“什么时候该推翻它”。只写正确决定的文档，等于没写。</div></div>
+    <div class="habit"><div class="hk">04 / HONEST</div><div class="hv">局限单独成页</div>
+      <div class="hd">合成数据不代表生产分布；“概率”没做校准；LLM 分支在无 Key 的 CI 里只被 mock 覆盖；面板没有鉴权不能公网。写在 README 第一屏能看见的地方。</div></div>
+  </div>
+</div></section>
+
+<!-- ================= 技能 ================= -->
+<section id="stack" style="padding-top:20px"><div class="wrap">
+  <div class="sec-hd"><h2><span class="idx">05</span>技术栈</h2></div>
+  <p class="lede">横条是按“我能独立交付到什么程度”自评，不是学时。写得短的那几项，我会在面试里直接说还没到位。</p>
+  <div class="matrix">
+    <div class="mrow rv"><div class="mk">Python</div><div><div class="mv">Agent 运行时 · FastAPI · 算法实现 · 标准库优先</div><div class="meter" style="--w:86%"><i></i></div></div></div>
+    <div class="mrow rv"><div class="mk">LLM 应用</div><div><div class="mv">工具调用 · 结构化输出校验 · 降级路径 · 引用约束</div><div class="meter" style="--w:80%"><i></i></div></div></div>
+    <div class="mrow rv"><div class="mk">评测/可观测</div><div><div class="mv">离线评测集 · JSONL 轨迹回放 · CI 门禁</div><div class="meter" style="--w:74%"><i></i></div></div></div>
+    <div class="mrow rv"><div class="mk">前端</div><div><div class="mv">Vue 3 / TypeScript · 原生 HTML/CSS/JS · 本页面即手写</div><div class="meter" style="--w:68%"><i></i></div></div></div>
+    <div class="mrow rv"><div class="mk">图形/着色器</div><div><div class="mv">Three.js · 自定义 GLSL · GPGPU 粒子</div><div class="meter" style="--w:64%"><i></i></div></div></div>
+    <div class="mrow rv"><div class="mk">运维/后端</div><div><div class="mv">Linux 巡检 · Nginx/MySQL/Redis 排障 · Spring Boot · SQL</div><div class="meter" style="--w:62%"><i></i></div></div></div>
+  </div>
+  <div style="margin-top:34px" class="note rv">
+    <b>关于“基础较弱”这件事。</b> 我是会把自己写坏的地方留在仓库里的人——上面那两条误伤（序号当数字、阻塞清单被删空）
+    就是真实跑出来的缺陷，我没有把它们从提交历史里抹掉，而是补了测试写在 ADR-002 的代价一栏。
+    比起一个“看起来没写过 bug”的作品集，我更希望面试时能讲清楚 bug 是怎么被发现和封住的。
+  </div>
+</div></section>
+
+<!-- ================= 仓库 ================= -->
+<section id="repo" style="padding-top:20px"><div class="wrap">
+  <div class="sec-hd"><h2><span class="idx">06</span>全部开源仓库</h2></div>
+  <div class="list">
+    <div class="row rv" onclick="window.open('https://github.com/yanx5433-cmd/opspilot-agent')">
+      <div class="yr mono">主力</div><div class="nm">opspilot-agent<span>巡检与故障诊断智能体</span></div>
+      <div class="ds">Agent 运行时 + 14 工具 + 5 道护栏 + JSONL 轨迹 + 离线评测 + CI + 观测面板。</div><div class="go">↗</div></div>
+    <div class="row rv" onclick="window.open('https://github.com/yanx5433-cmd/contentops-agent')">
+      <div class="yr mono">已开源</div><div class="nm">contentops-agent<span>带货内容运营智能体</span></div>
+      <div class="ds">双引擎评分、三级合规、审批与审计、回流复盘。26 接口 / 72 项测试。</div><div class="go">↗</div></div>
+    <div class="row rv" onclick="window.open('https://github.com/yanx5433-cmd/manufacturing-sop-qa-assistant')">
+      <div class="yr mono">RAG</div><div class="nm">manufacturing-sop-qa-assistant<span>SOP 智能问答</span></div>
+      <div class="ds">Streamlit + LangChain + Chroma 的轻量检索增强问答。</div><div class="go">↗</div></div>
+    <div class="row rv" onclick="window.open('https://github.com/yanx5433-cmd/rain-as-data')">
+      <div class="yr mono">图形</div><div class="nm">rain-as-data<span>数据 → 雨</span></div>
+      <div class="ds">Three.js + WebGL + 自定义 GLSL，把 26 个降雨数据点渲染成实时雨景。</div><div class="go">↗</div></div>
+    <div class="row rv" onclick="window.open('https://github.com/yanx5433-cmd/atlas-cellularis')">
+      <div class="yr mono">图形</div><div class="nm">atlas-cellularis<span>体积细胞课件</span></div>
+      <div class="ds">自定义 GLSL：体积细胞质、流场粒子、薄膜干涉虹彩、Ca²⁺ 波。零构建离线可跑。</div><div class="go">↗</div></div>
+  </div>
+</div></section>
+
+</main>
+
+<footer><div class="wrap">
+  <div class="fc">
+    本页面为手写单文件，无外部字体与 CDN 依赖，国内网络下首屏不请求第三方资源；
+    仓库地址见上，README 内含完整复现步骤与已知局限。<br>
+    作品集中的每一项数字都来自仓库实测（pytest 收集数、路由装饰器计数、LOC 统计），未沿用简历概数。
+    <br><span style="color:var(--dim)">为保护个人信息，本页不含手机号与邮箱；联系方式在投递材料中单独提供。</span>
+  </div>
+  <div class="fl">
+    <a href="https://github.com/yanx5433-cmd" target="_blank" rel="noopener">github.com/yanx5433-cmd ↗</a>
+    <a href="https://github.com/yanx5433-cmd/opspilot-agent" target="_blank" rel="noopener">opspilot-agent ↗</a>
+    <span style="color:var(--dimmer)">薛彦欣 · 2027 届 · AI 应用工程师</span>
+  </div>
+</div></footer>
+
+<script>
+document.documentElement.classList.add('js');
+/* ---------- 真实轨迹流：逐行进场，滚完一轮后循环 ---------- */
+const EV = [
+ ["guard","input","放行"],
+ ["plan","rule","意图 diagnose · 6 步"],
+ ["tool_call","metrics_query","host=db-01 metric=mem window=24"],
+ ["observation","metrics_query","<strong>db-01 mem：当前 93.2% 已超阈值 85%</strong>、EWMA 越限 1 点（峰值 97.3%）"],
+ ["tool_call","log_search","pattern=restart|OOM level=ERROR"],
+ ["observation","log_search","<strong>命中 71 条（FATAL 71）</strong>「Out of memory: Killed process &lt;N&gt; (mysqld)」"],
+ ["tool_call","kb_search","「重启 处置」top_k=3"],
+ ["observation","kb_search","运维手册命中 3 篇，最相关「进程被 OOM Killer 终止处置手册」"],
+ ["tool_call","root_cause_rank","host=db-01"],
+ ["observation","root_cause_rank","<strong>根因排序：最可能「进程被 OOM Killer 终止」（P0）</strong>，共 5 个候选"],
+ ["tool_call","runbook_get","rb-oom-kill"],
+ ["observation","runbook_get","处置步骤 6 条 · 先抓 dmesg 现场，别先重启"],
+ ["tool_call","incident_history","host=db-01 keyword=重启"],
+ ["observation","incident_history","平均修复 41.0 分钟；1 类属反复发生（需根治）"],
+ ["reflect","cover","证据覆盖达标 ['doc','log','metric'] → 无需重规划"],
+ ["citation","gate","保留 16 句 · 裁掉 0 句 · 数字溯源异常 0 处（unevidenced_ratio=0.0）"],
+ ["answer","done","status=done｜预算 steps 6/10 · tool 6/14 · llm 0/6"]
+];
+const stream = document.getElementById('stream');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let i = 0;
+function tick(){
+  if (i >= EV.length){ if(!reduce) setTimeout(()=>{ stream.innerHTML=''; i=0; tick(); }, 3200); return; }
+  const [ty, d, tx] = EV[i];
+  const el = document.createElement('div');
+  el.className = 'tl'; el.style.animationDelay = '0ms';
+  el.innerHTML = `<span class="seq">${String(i+2).padStart(2,'0')}</span>`
+    + `<span class="ty ${ty}">${ty}</span><span class="tx">${d?'<b style="color:#9fb4c6">'+d+'</b> · ':''}${tx}</span>`;
+  stream.appendChild(el); i++;
+  stream.scrollTop = stream.scrollHeight;
+  setTimeout(tick, reduce ? 40 : (ty==='observation'?620:300));
+}
+tick();
+
+/* ---------- 滚动进场 ---------- */
+const io = new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}),{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.rv,.stage,.mrow').forEach(el=>io.observe(el));
+
+/* ---------- 复制命令 ---------- */
+document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',()=>{
+  const t=document.getElementById(b.dataset.copy).innerText.replace(/^[$ ]/gm,'').trim();
+  navigator.clipboard.writeText(t).then(()=>{b.textContent='已复制';setTimeout(()=>b.textContent='复制',1600)})
+    .catch(()=>{b.textContent='手动复制'});
+}));
+</script>
+</body>
+</html>
