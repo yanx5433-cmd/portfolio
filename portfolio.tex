@@ -243,13 +243,28 @@ $ python -m app.cli run "db-01 为什么一直在重启，帮我排查根因" -v
 % ================================================================ 2
 \section{其他作品}
 
+\subsection{TEMU 全托管卖家 Agent · 选品 / 合规 / 客服（已开源，带在线演示）}
+FastAPI + SQLAlchemy + SQLite。\url{https://yanx5433-cmd.github.io/temu-agent/} 是可点开的只读回放演示。
+\begin{itemize}
+\item \textbf{26 个接口、78 项离线测试}（pytest 实际收集条目数），后端 \texttt{app/} 2{,}979 行 Python。
+\item \textbf{合规是前置门槛而不是打分项}：13 类禁售规则命中即 REJECT，4 项资料缺失为 REVIEW，
+  第 0 关硬门槛（超重/负毛利/价格无空间/缺认证）排在评分\textbf{之前}——高分买不通资格。
+\item \textbf{把「哪些数字有依据」做成一层}：AHP 两两比较推权重（CR=0.0092）、
+  权重 $\pm$ 20\% 扰动量化排名稳健性、每个字段标 \texttt{measured/derived/default/missing}、
+  推荐$\to$动销配对样本 $<30$ 条时\textbf{拒绝给命中率结论}。
+\item \textbf{在线演示不撒谎}：演示页由后台模板原样生成，接口响应来自本机真实运行录制，
+  上传与官方授权在演示里明确关闭；没录制过的问题回「没有录制过」，不编一个像样的答案。
+\item 数据口径写在 README 第一屏：61 条商品信号里 60 条是演示数据，权重是待校准的经验值——
+  \textbf{TEMU 不公开官方选品权重}，不讲成平台标准。
+\end{itemize}
+
 \subsection{ContentOps Agent · 带货内容运营智能体（已开源）}
 FastAPI + SQLite。与 OpsPilot 同源但不同域：解决「内容能不能发、发完卖得怎样」。
 \begin{itemize}
 \item \textbf{26 个接口、72 项离线测试}（pytest 实际收集条目数，非概数），2{,}401 行 Python。
 \item \textbf{双引擎选题评分}：内容质量引擎 ×0.6 + 商品转化引擎 ×0.4 × 加购系数。
 \item \textbf{P0/P1/P2 三级合规过滤}：P0 命中直接驳回并留审计；审批状态机
-  \texttt{draft→scored→reviewed→approved→published}，非法跃迁返回 409。
+  \texttt{draft→\allowbreak scored→\allowbreak reviewed→\allowbreak approved→\allowbreak published}，非法跃迁返回 409。
 \item \textbf{人工审批与审计}：所有写动作落 \texttt{AuditLog}，可回溯谁在何时改了什么。
 \item \textbf{销售回流复盘}：上架后回收 GMV/退货率，与选题预估做偏差校准。
 \item 同样\textbf{无 API Key 全功能可用}：规则模板兜底，模型不可用时降级为素材摘录。
@@ -331,6 +346,8 @@ $ python -m uvicorn app.server:app --port 18090                    # 观测面�
 \begin{tabularx}{\textwidth}{@{}L{4.3cm}X@{}}
 \url{https://github.com/yanx5433-cmd/opspilot-agent} & 主打作品：Agent 运行时 + \Ntools{} 工具 + \Ngate{} 闸门 + 轨迹 + 评测 + CI + 面板 \\
 \url{https://github.com/yanx5433-cmd/contentops-agent} & 内容运营智能体：26 接口 / 72 项测试 / 三级合规 / 审批审计 \\
+\url{https://github.com/yanx5433-cmd/temu-agent} & 选品与客服 Agent：26 接口 / 78 项测试 / 合规硬门槛 / AHP 与敏感性 \\
+\url{https://yanx5433-cmd.github.io/temu-agent/} & 上面这个的在线演示：只读回放，免登录，手机可看 \\
 \url{https://github.com/yanx5433-cmd/manufacturing-sop-qa-assistant} & 轻量 RAG 问答 \\
 \url{https://github.com/yanx5433-cmd/rain-as-data} & WebGL 数据可视化实验 \\
 \url{https://github.com/yanx5433-cmd/atlas-cellularis} & GLSL 体积细胞实验 \\

@@ -378,6 +378,18 @@ html.js .rv.in{opacity:1;transform:none}
   <div class="sec-hd"><h2><span class="idx">03</span>其他作品</h2></div>
   <p class="lede">下面每一项都能点开看到代码，数字均为仓库实测，不来自简历概数。</p>
   <div class="list">
+    <div class="row rv" onclick="location.href='https://github.com/yanx5433-cmd/temu-agent'">
+      <div class="yr mono">2026</div>
+      <div class="nm">TEMU 全托管卖家 Agent<span>选品 · 合规门槛 · 客服草稿 · 已开源 + 在线演示</span></div>
+      <div class="ds"><b>26 个接口、78 项离线测试</b>（pytest 收集数实测）。13 类禁售规则前置淘汰、
+        第 0 关硬门槛在评分之前、AHP 两两比较推权重（CR=0.0092）、±20% 扰动量化排名稳健性、
+        推荐→动销命中率在样本 &lt;30 条时<b>拒绝给结论</b>。FastAPI + SQLite，无店铺授权也能跑通。
+        <a href="https://yanx5433-cmd.github.io/temu-agent/" target="_blank" rel="noopener"
+           onclick="event.stopPropagation()">在线演示·只读回放 ↗</a>
+        ——演示数据与实测数据的分界写在 README 第一屏。
+        <div class="tags"><span class="tag">FastAPI</span><span class="tag">多 Agent 编排</span><span class="tag">合规规则</span><span class="tag">AHP / 敏感性</span></div></div>
+      <div class="go">3.0k LOC ↗</div>
+    </div>
     <div class="row rv" onclick="location.href='https://github.com/yanx5433-cmd/contentops-agent'">
       <div class="yr mono">2026</div>
       <div class="nm">ContentOps Agent<span>带货内容运营智能体 · 已开源</span></div>
@@ -464,6 +476,11 @@ html.js .rv.in{opacity:1;transform:none}
     <div class="row rv" onclick="window.open('https://github.com/yanx5433-cmd/contentops-agent')">
       <div class="yr mono">已开源</div><div class="nm">contentops-agent<span>带货内容运营智能体</span></div>
       <div class="ds">双引擎评分、三级合规、审批与审计、回流复盘。26 接口 / 72 项测试。</div><div class="go">↗</div></div>
+    <div class="row rv" onclick="window.open('https://github.com/yanx5433-cmd/temu-agent')">
+      <div class="yr mono">已开源</div><div class="nm">temu-agent<span>TEMU 全托管选品与客服 Agent</span></div>
+      <div class="ds">合规硬门槛 + 可解释评分 + AHP/敏感性 + 结果回流。26 接口 / 78 项测试，
+        带 <a href="https://yanx5433-cmd.github.io/temu-agent/" target="_blank" rel="noopener"
+        onclick="event.stopPropagation()">只读回放在线演示</a>。</div><div class="go">↗</div></div>
     <div class="row rv" onclick="window.open('https://github.com/yanx5433-cmd/manufacturing-sop-qa-assistant')">
       <div class="yr mono">RAG</div><div class="nm">manufacturing-sop-qa-assistant<span>SOP 智能问答</span></div>
       <div class="ds">Streamlit + LangChain + Chroma 的轻量检索增强问答。</div><div class="go">↗</div></div>
